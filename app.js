@@ -2,7 +2,8 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 //bring in routes
-const articleRoutes = require("./routes/article");
+const homeRouter = require("./routes/homeRouter");
+const articlesRouter = require("./routes/articlesRouter");
 //moves on to the next phase
 const myOwnMiddleware = (req, res, next) => {
    console.log("middleware applied!!");
@@ -16,7 +17,8 @@ app.use(myOwnMiddleware);
 app.use(morgan("dev"));
 
 //home controllers
-app.use("/", articleRoutes);
+app.use("/", homeRouter);
+app.use("/articles", articlesRouter);
 
 
 const port = process.env.PORT;
