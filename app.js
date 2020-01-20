@@ -1,22 +1,35 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
-//bring in routes
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+dotenv.config(); //invoke dotenv
+const bodyParser = require("body-parser");
+
+//DB CONNECTION
+mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true }  )
+    .then(() => console.log("DB connected"));
+
+mongoose.connection.on("error",(err)=>{
+   console.log("DB connection error :" + err.message);
+});
+
+//BRING IN ROUTES
 const homeRouter = require("./routes/homeRouter");
-const articlesRouter = require("./routes/articlesRouter");
-//moves on to the next phase
+const articlesRouter = require("./routes/articleRouter");
+
+//CUSTOM MIDDLEWARE, MOVES ONTO NEXT PHASE
 const myOwnMiddleware = (req, res, next) => {
    console.log("middleware applied!!");
    next();
 };
-const dotenv = require("dotenv");
-dotenv.config(); //invoke dotenv
 
-//middleware
+//MIDDLEWARE
 app.use(myOwnMiddleware);
 app.use(morgan("dev"));
+app.use(bodyParser.json());
 
-//home controllers
+//CONTROLLER ROUTING
 app.use("/", homeRouter);
 app.use("/articles", articlesRouter);
 
